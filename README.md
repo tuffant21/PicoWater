@@ -39,17 +39,28 @@ This project automates the watering of your garden using a Raspberry Pi Pico. It
    mkdir build
    cd build
    cmake ..
+
+   # or if you're using pico_w
+   cmake -DPICO_BOARD=pico_w ..
    ```
 
 4. Build the project:
    ```bash
-   make
+   make -j4
    ```
 
 ## Usage
 1. Flash the compiled program to your Raspberry Pi Pico or Pico W.
-2. Connect the solenoid valve to the specified GPIO pin (default is pin 16).
-3. Set the RTC to the current date and time in `definitions.h`:
+2. Update CMakeLists.txt - set bool for pico w board
+   ```
+   set(PICO_W TRUE)
+   ```
+3. Set the board version in `definitions.h`:
+   ```c
+   #define PICO_W 1
+   ```
+4. Connect the solenoid valve to the specified GPIO pin (default is pin 16).
+5. Set the RTC to the current date and time in `definitions.h`:
    ```c
    #define TODAYS_YEAR 2024
    #define TODAYS_MONTH 5
@@ -59,7 +70,7 @@ This project automates the watering of your garden using a Raspberry Pi Pico. It
    #define TODAYS_MIN 30
    #define TODAYS_SEC 0
    ```
-4. Define your watering schedule in `definitions.h`:
+6. Define your watering schedule in `definitions.h`:
    ```c
    datetime_t ALARMS[] = {
        { .year = DATETIME_IGNORE, .month = DATETIME_IGNORE, .day = DATETIME_IGNORE, .dotw = SUNDAY, .hour = 6, .min = 0, .sec = 0 },
@@ -67,7 +78,7 @@ This project automates the watering of your garden using a Raspberry Pi Pico. It
        { .year = DATETIME_IGNORE, .month = DATETIME_IGNORE, .day = DATETIME_IGNORE, .dotw = FRIDAY, .hour = 6, .min = 0, .sec = 0 }
    };
    ```
-5. Define how long you want the watering to run for (default is 300000):
+7. Define how long you want the watering to run for (default is 300000):
     ```c
     #define SOLENOID_RUNTIME_MS 300000
     ```
@@ -78,6 +89,20 @@ This project automates the watering of your garden using a Raspberry Pi Pico. It
   - **main.c**: Main application code.
   - **definitions.h**: Configuration and definitions.
 - **pico_sdk_import.cmake**: Pico SDK import script.
+
+## Known Issues
+
+### Error:
+   `fatal error: pico/cyw43_arch.h: No such file or directory`
+
+### Fix:
+   ```sh
+   rm -rf build
+   mkdir build
+   cd build
+   cmake -DPICO_BOARD=pico_w ..
+   make -j4
+   ```
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](https://opensource.org/license/mit) file for details.
