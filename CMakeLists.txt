@@ -18,19 +18,18 @@ add_executable(pico_water
   ${SOURCES_CPP}
 )
 pico_set_program_name(pico_water "PicoWater")
-pico_set_program_version(pico_water "1.0")
+pico_set_program_version(pico_water "1.0.0")
 pico_enable_stdio_uart(pico_water 0)
 pico_enable_stdio_usb(pico_water 1)
 pico_add_extra_outputs(pico_water)
 
-# change this variable to FALSE if you are not using a PICO_W
-set(PICO_W TRUE)
-
-if(PICO_W)
-  message("Using PICO_W")
-  set(PICO_BOARD pico_w CACHE STRING "Board type")
+# if cmake is run like this "cmake -DPICO_BOARD=pico_w ..", this if statement will evaluate to true
+if(DEFINED PICO_BOARD AND PICO_BOARD STREQUAL "pico_w")
+  message("PICO_BOARD is set to 'pico_w'")
+  target_compile_definitions(pico_water PRIVATE PICO_W=1)
   target_link_libraries(pico_water pico_stdlib pico_multicore hardware_rtc pico_cyw43_arch_none)
 else()
-  message("Using PICO")
+  message("PICO_BOARD is not set")
+  target_compile_definitions(pico_water PRIVATE PICO_W=0)
   target_link_libraries(pico_water pico_stdlib pico_multicore hardware_rtc)
 endif()

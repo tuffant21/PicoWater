@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.1] - 2024-06-16
+
+### Added
+* Preprocessor definition in `CMakeLists.txt` for PICO_W variable
+
+### Changed
+* CMake requires the board type to be defined via `-DPICO_BOARD=` for pico_w to build now
+* Updated README to reflect new build process
+
+### Fixed
+- Known issue in v1.0.0 that was in the Known Issues section of the `README.md`
+
+### Removed
+* PICO_W variable in `CMakeLists.txt`
+* PICO_W variable in `definitions.txt`
+* Known Issues section from `README.md`. New build process and preprocessor definition should now fix this
+
 ## [1.0.0] - 2024-06-15
 
 ### Added

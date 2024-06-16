@@ -1,4 +1,3 @@
-#define PICO_W 1
 #define SOLENOID_PIN 16
 #define SOLENOID_RUNTIME_MS 300000 // five minutes
 
