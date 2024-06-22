@@ -8,6 +8,10 @@
 #include "alarms.h"
 #include "usb_comms.h"
 
+#if PICO_W
+#include "pico/cyw43_arch.h"
+#endif
+
 bool init() {
     if(!stdio_init_all()) {
         return false;

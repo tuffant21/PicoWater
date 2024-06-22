@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.1] - 2024-21-24
+
+### Added
+* N/A
+
+### Changed
+* N/A
+
+### Fixed
+* Fixed missing import for pico_w in main
+
+### Removed
+* N/A
+
 ## [1.1.0] - 2024-21-24
 
 ### Added
