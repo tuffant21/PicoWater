@@ -14,8 +14,8 @@ file(GLOB_RECURSE SOURCES_C src/*.c)
 
 add_executable(pico_water
   src/main.c
-  ${SOURCES_HPP}
-  ${SOURCES_CPP}
+  ${SOURCES_H}
+  ${SOURCES_C}
 )
 pico_set_program_name(pico_water "PicoWater")
 pico_set_program_version(pico_water "1.0.0")
@@ -27,9 +27,18 @@ pico_add_extra_outputs(pico_water)
 if(DEFINED PICO_BOARD AND PICO_BOARD STREQUAL "pico_w")
   message("PICO_BOARD is set to 'pico_w'")
   target_compile_definitions(pico_water PRIVATE PICO_W=1)
-  target_link_libraries(pico_water pico_stdlib pico_multicore hardware_rtc pico_cyw43_arch_none)
+  target_link_libraries(pico_water
+    pico_stdlib
+    pico_multicore
+    hardware_rtc
+    pico_cyw43_arch_none
+    )
 else()
   message("PICO_BOARD is not set")
   target_compile_definitions(pico_water PRIVATE PICO_W=0)
-  target_link_libraries(pico_water pico_stdlib pico_multicore hardware_rtc)
+  target_link_libraries(pico_water
+    pico_stdlib
+    pico_multicore
+    hardware_rtc
+    )
 endif()

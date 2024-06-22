@@ -91,5 +91,6 @@
         "concepts": "cpp",
         "ranges": "cpp",
         "climits": "cpp"
-    }
+    },
+    "cortex-debug.variableUseNaturalFormat": true
 }

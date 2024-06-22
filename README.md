@@ -14,6 +14,7 @@ This project automates the watering of your garden using a Raspberry Pi Pico. It
 - Automated garden watering using a solenoid valve.
 - Configurable watering schedules via RTC alarms.
 - Supports both Raspberry Pi Pico and Pico W (with Wi-Fi functionality).
+- Supports USB communication to control pico
 
 ## Requirements
 - Raspberry Pi Pico or Pico W
@@ -62,24 +63,63 @@ This project automates the watering of your garden using a Raspberry Pi Pico. It
    #define TODAYS_MIN 30
    #define TODAYS_SEC 0
    ```
-4. Define your watering schedule in `definitions.h`:
+4. Define your watering schedule in `initial_alarms.h`:
    ```c
-   datetime_t ALARMS[] = {
-       { .year = DATETIME_IGNORE, .month = DATETIME_IGNORE, .day = DATETIME_IGNORE, .dotw = SUNDAY, .hour = 6, .min = 0, .sec = 0 },
-       { .year = DATETIME_IGNORE, .month = DATETIME_IGNORE, .day = DATETIME_IGNORE, .dotw = TUESDAY, .hour = 6, .min = 0, .sec = 0 },
-       { .year = DATETIME_IGNORE, .month = DATETIME_IGNORE, .day = DATETIME_IGNORE, .dotw = FRIDAY, .hour = 6, .min = 0, .sec = 0 }
+   datetime_t INITIAL_ALARMS[] = {
+      { 
+         .year = DATETIME_IGNORE, 
+         .month = DATETIME_IGNORE, 
+         .day = DATETIME_IGNORE, 
+         .dotw = SUNDAY, 
+         .hour = 6, 
+         .min = 0, 
+         .sec = 0 
+      },
+      { 
+         .year = DATETIME_IGNORE,
+         .month = DATETIME_IGNORE, 
+         .day = DATETIME_IGNORE, 
+         .dotw = TUESDAY, 
+         .hour = 6, 
+         .min = 0, 
+         .sec = 0 
+      },
+      { 
+         .year = DATETIME_IGNORE, 
+         .month = DATETIME_IGNORE, 
+         .day = DATETIME_IGNORE, 
+         .dotw = FRIDAY, 
+         .hour = 6, 
+         .min = 0, 
+         .sec = 0 
+      }
    };
    ```
 5. Define how long you want the watering to run for (default is 300000):
     ```c
     #define SOLENOID_RUNTIME_MS 300000
     ```
+6. Control the Pico via USB
+  * connect a usb to the pico
+  * run the following command in a terminal  `minicom -b 115200 -D /dev/ttyACM0 -c on`
+  * type `help` to get started
 
 ## Project Structure
 - **build/**: Compiled source directory.
 - **src/**: Source code directory.
-  - **main.c**: Main application code.
+  - **alarms.c**: Holds and defines all of the application alarms
+  - **alarms.h**: Headers for alarms.c
+  - **core_entries.c**: Holds any interrupts or core 1 entries
+  - **core_entries.h**: Headers for core_entries.c
   - **definitions.h**: Configuration and definitions.
+  - **initial_alarms.h**: Holds all of the initial alarms a user wants the program to start with
+  - **logger.c**: Handles printing color and arguments to console
+  - **logger.h**: Headers for logger.c
+  - **main.c**: Main application code.
+  - **on_board_led.c**: Handles setting the GPIO value for the on board led
+  - **on_board_led.h**: Headers for on_board_led.c
+  - **usb_comms.c**: USB Communication between a host and the pico
+  - **usb_comms.h** Headers for usb_comms.c
 - **CHANGELOG.md**: History of project versions and changes
 - **CMakeLists.txt**: CMake configuration file.
 - **pico_sdk_import.cmake**: Pico SDK import script.

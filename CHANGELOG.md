@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.1.0] - 2024-21-24
+
+### Added
+* Added USB Communication
+* Added logger to log debug, info, warn, and error
+* Added dedicated on_board_led file
+* Added dedicated initial_alarms file
+* Added dedicated core_entries file
+* Added an alarms file to manage program alarms
+
+### Changed
+* Update README.md
+
+### Fixed
+* Fix an incorrect SOURCES_HPP and SOURCES_CPP to SOURCES_H and SOURCES_C
+
+### Removed
+* N/A
+
 ## [1.0.1] - 2024-06-16
 
 ### Added
@@ -10,7 +29,7 @@
 * Updated README to reflect new build process
 
 ### Fixed
-- Known issue in v1.0.0 that was in the Known Issues section of the `README.md`
+* Known issue in v1.0.0 that was in the Known Issues section of the `README.md`
 
 ### Removed
 * PICO_W variable in `CMakeLists.txt`
@@ -30,10 +49,10 @@
 * Multicore support to handle watering tasks.
 
 ### Changed
-- N/A
+* N/A
 
 ### Fixed
-- N/A
+* N/A
 
 ### Removed
-- N/A
+* N/A
