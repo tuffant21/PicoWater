@@ -28,6 +28,13 @@ void handle_request_help(void) {
     log_info("set-gpio-value=BOOL");
     log_info("    sets the gpio value for the solenoid valve");
     log_info("");
+
+#if defined(PICO_W)
+    log_info("get-ip-address");
+    log_info("    gets the router assigned ip address for this device");
+    log_info("");
+#endif
+
     log_info("The TIME argument should be in the format of YYYY-MM-DD d HH:MM:SS.");
     log_info("    (e.g., 2024-06-17 1 14:30:00 for June 17, 2024, Monday, 14:30:00).");
     log_info("");
@@ -281,6 +288,18 @@ void handle_request_set_gpio_value(const char *buffer) {
     }
 }
 
+#if defined(PICO_W)
+void handle_request_get_ip_address(void) {
+    struct netif *netif = netif_list;
+    while (netif != NULL) {
+        if (netif_is_up(netif)) {
+            log_info("IP Address: %s", ip4addr_ntoa(netif_ip4_addr(netif)));
+        }
+        netif = netif->next;
+    }
+}
+#endif
+
 void handle_newline_or_carriage_return(const char *buffer) {
     // check for a help request
     if (
@@ -334,6 +353,15 @@ void handle_newline_or_carriage_return(const char *buffer) {
     ) {
         handle_request_set_gpio_value(buffer);
     }
+
+#if defined(PICO_W)
+    else if (
+        strncmp("get-ip-address", buffer, strlen("get-ip-address")) == 0
+    ) {
+        handle_request_get_ip_address();
+    }
+#endif
+
     // command not recognized
     else {
         log_warn("Command [%s] not recognized. Try typing \"help\" to see a list of commands.", buffer);

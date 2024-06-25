@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pico Water Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS for Futuristic Styling -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #141E30; /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #243B55, #141E30); /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #243B55, #141E30);
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            margin: 0;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            width: 100%;
+        }
+        .card-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .card-header h2 {
+            font-weight: 300;
+        }
+        .form-control, .btn {
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+        .btn-primary, .btn-success, .btn-danger {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            transition: background 0.3s ease-in-out;
+        }
+        .btn-primary:hover, .btn-success:hover, .btn-danger:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        .btn:disabled {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: rgba(255, 255, 255, 0.3) !important;
+        }
+        .form-check-label {
+            color: #ffffff;
+        }
+        .list-group-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffffff;
+        }
+        .next-alarm {
+            color: #ff4081;
+            font-weight: bold;
+        }
+        .current-date-time {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Pico Water Dashboard</h2>
+            </div>
+            <div class="card-body">
+                <!-- System Information Section -->
+                <div class="section mb-4">
+                    <h4>System Information</h4>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="power-toggle">Power:</label>
+                            <div class="custom-control custom-switch">
+                                <!--#-->
+                                <input type="checkbox" class="custom-control-input" id="power-toggle" onclick="togglePower()">
+                                <label class="custom-control-label" for="power-toggle">On/Off</label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="system-temp">Temperature:</label>
+                            <p id="system-temp">N/A</p>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="system-uptime">System Uptime:</label>
+                            <p id="system-uptime">N/A</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Date and Time Section -->
+                <div class="section mb-4">
+                    <h4>Current Date and Time</h4>
+                    <p id="current-date-time" class="current-date-time">
+                        <span id="dotw"></span>, <span id="month"></span> <span id="day"></span>, <span id="year"></span> - <span id="time"></span>
+                    </p>
+                    <form id="set-date-time-form">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="datetime-input">Set Date & Time:</label>
+                                <input type="datetime-local" id="datetime-input" class="form-control" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="dotw-input">Day of the Week:</label>
+                                <select id="dotw-input" class="form-control" required>
+                                    <option value="" disabled selected>Select a day</option>
+                                    <option value="0">Sunday</option>
+                                    <option value="1">Monday</option>
+                                    <option value="2">Tuesday</option>
+                                    <option value="3">Wednesday</option>
+                                    <option value="4">Thursday</option>
+                                    <option value="5">Friday</option>
+                                    <option value="6">Saturday</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-block" id="set-date-time-btn" disabled onclick="setDateTime()">Set Date and Time</button>
+                    </form>
+                </div>
+                
+                <!-- Alarms Section -->
+                <div class="section mb-4">
+                    <h4>Alarms</h4>
+                    <ul class="list-group" id="alarms-list">
+                        <!-- Alarms will be listed here -->
+                    </ul>
+                    <form id="add-alarm-form" class="mt-3">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="alarm-year">Year:</label>
+                                <input type="number" id="alarm-year" class="form-control" placeholder="Optional">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="alarm-month">Month:</label>
+                                <input type="number" id="alarm-month" class="form-control" placeholder="Optional" min="1" max="12">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="alarm-day">Day:</label>
+                                <input type="number" id="alarm-day" class="form-control" placeholder="Optional" min="1" max="31">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="alarm-dotw">Day of the Week:</label>
+                                <select id="alarm-dotw" class="form-control">
+                                    <option value="">Optional</option>
+                                    <option value="0">Sunday</option>
+                                    <option value="1">Monday</option>
+                                    <option value="2">Tuesday</option>
+                                    <option value="3">Wednesday</option>
+                                    <option value="4">Thursday</option>
+                                    <option value="5">Friday</option>
+                                    <option value="6">Saturday</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="alarm-hour">Hour:</label>
+                                <input type="number" id="alarm-hour" class="form-control" placeholder="Optional" min="0" max="23">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="alarm-min">Min:</label>
+                                <input type="number" id="alarm-min" class="form-control" placeholder="Optional" min="0" max="59">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="alarm-sec">Sec:</label>
+                                <input type="number" id="alarm-sec" class="form-control" required min="0" max="59">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-success btn-block" id="add-alarm-btn" disabled onclick="addAlarm()">Add Alarm</button>
+                    </form>
+                    <form id="remove-alarm-form" class="mt-3">
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label for="remove-alarm">Remove Alarm:</label>
+                                <input type="number" id="remove-alarm" class="form-control" placeholder="Alarm ID" required>
+                            </div>
+                            <div class="form-group col-md-4 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger btn-block" id="remove-alarm-btn" disabled onclick="removeAlarm()">Remove Alarm</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const setDateTimeForm = document.getElementById('set-date-time-form');
+            const addAlarmForm = document.getElementById('add-alarm-form');
+            const removeAlarmForm = document.getElementById('remove-alarm-form');
+
+            setDateTimeForm.addEventListener('input', function () {
+                document.getElementById('set-date-time-btn').disabled = !setDateTimeForm.checkValidity();
+            });
+
+            addAlarmForm.addEventListener('input', function () {
+                document.getElementById('add-alarm-btn').disabled = !addAlarmForm.checkValidity();
+            });
+
+            removeAlarmForm.addEventListener('input', function () {
+                document.getElementById('remove-alarm-btn').disabled = !removeAlarmForm.checkValidity();
+            });
+        });
+
+        function setDateTime() {
+            const datetime = document.getElementById('datetime-input').value;
+            const dotw = document.getElementById('dotw-input').value;
+            const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+            if (datetime) {
+                const date = new Date(datetime);
+                document.getElementById('year').innerText = date.getFullYear();
+                document.getElementById('month').innerText = date.toLocaleString('default', { month: 'long' });
+                document.getElementById('day').innerText = date.getDate();
+                document.getElementById('time').innerText = date.toTimeString().split(' ')[0];
+            }
+
+            document.getElementById('dotw').innerText = daysOfWeek[dotw];
+        }
+
+        function addAlarm() {
+            const year = document.getElementById('alarm-year').value;
+            const month = document.getElementById('alarm-month').value;
+            const day = document.getElementById('alarm-day').value;
+            const dotw = document.getElementById('alarm-dotw').value;
+            const hour = document.getElementById('alarm-hour').value;
+            const min = document.getElementById('alarm-min').value;
+            const sec = document.getElementById('alarm-sec').value;
+            const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+            let alarmTime = sec + " sec";
+            if (min) alarmTime = min + " min " + alarmTime;
+            if (hour) alarmTime = hour + " hr " + alarmTime;
+            if (day) alarmTime = day + " day " + alarmTime;
+            if (month) alarmTime = month + " month " + alarmTime;
+            if (year) alarmTime = year + " year " + alarmTime;
+            if (dotw) alarmTime = daysOfWeek[dotw] + ", " + alarmTime;
+
+            const alarmsList = document.getElementById('alarms-list');
+            const alarmId = alarmsList.children.length + 1;
+            const alarmItem = document.createElement('li');
+            alarmItem.classList.add('list-group-item');
+            alarmItem.innerText = `Alarm ${alarmId}: ${alarmTime}`;
+            alarmItem.id = `alarm-${alarmId}`;
+            alarmsList.appendChild(alarmItem);
+        }
+
+        function removeAlarm() {
+            const alarmId = document.getElementById('remove-alarm').value;
+            const alarmItem = document.getElementById(`alarm-${alarmId}`);
+            if (alarmItem) {
+                alarmItem.remove();
+            } else {
+                alert('Alarm not found');
+            }
+        }
+
+        function togglePower() {
+            const powerToggle = document.getElementById('power-toggle');
+            alert(`System is now ${powerToggle.checked ? 'On' : 'Off'}`);
+        }
+
+        // Placeholder function to set the system temperature
+        function setSystemTemperature(temp) {
+            document.getElementById('system-temp').innerText = `${temp} °C`;
+        }
+
+        // Placeholder function to set the system uptime
+        function setSystemUptime(uptime) {
+            document.getElementById('system-uptime').innerText = uptime;
+        }
+
+        // Simulate setting system temperature and uptime (this should be replaced with actual data fetching logic)
+        setSystemTemperature(25);
+        setSystemUptime("12 days, 5 hours, 30 minutes");
+    </script>
+</body>
+</html>

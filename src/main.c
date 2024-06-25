@@ -8,8 +8,9 @@
 #include "alarms.h"
 #include "usb_comms.h"
 
-#if PICO_W
+#if defined(PICO_W)
 #include "pico/cyw43_arch.h"
+#include "network_comms.h"
 #endif
 
 bool init() {
@@ -17,11 +18,13 @@ bool init() {
         return false;
     }
 
-#if PICO_W
+#if defined(PICO_W)
     if (cyw43_arch_init()) {
-        printf("Wi-Fi init failed");
+        log_error("Wi-Fi init failed");
         return false;
     }
+
+    network_comms_init();
 #endif
 
     on_board_led_init();

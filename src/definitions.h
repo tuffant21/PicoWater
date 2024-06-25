@@ -36,4 +36,9 @@
 // Buffer Max Lengths
 #define USB_COMMS_MAX_BUFFER_LENGTH 256
 
+// The following definitions should be defined through the cmake build process
+// #define PICO_W           1  // -DPICO_BOARD=""
+// #define WIFI_SSID           // -DWIFI_SSID=""
+// #define WIFI_PASSWORD       // -DWIFI_PASSWORD=""
+
 #endif // DEFINITIONS_H

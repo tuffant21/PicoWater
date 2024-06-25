@@ -5,7 +5,7 @@
 #include "stdbool.h"
 #include "definitions.h"
 
-#if PICO_W
+#if defined(PICO_W)
 #include "pico/cyw43_arch.h"
 #endif
 

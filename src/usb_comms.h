@@ -13,6 +13,10 @@
 #include "on_board_led.h"
 #include "alarms.h"
 
+#if defined(PICO_W)
+#include "pico/cyw43_arch.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
