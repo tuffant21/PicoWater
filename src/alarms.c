@@ -6,29 +6,32 @@ static alarms_t m_alarms = {
     .length = 0
 };
 
-bool alarms_init(const datetime_t *initialAlarms, const uint8_t initialAlarmsLength) {
-    if (m_alarms.alarms != NULL) {
-        free(m_alarms.alarms);
-    }
-
-    uint32_t memSize = sizeof(datetime_t) * initialAlarmsLength;
-
-    m_alarms.index = 0;
-    m_alarms.length = initialAlarmsLength;
-    m_alarms.alarms = malloc(memSize);
-    memcpy(m_alarms.alarms, initialAlarms, memSize);
-
-    return true;
+static void water_plants(void) {
+    on_board_led_put(GPIO_ON);
+    gpio_put(SOLENOID_PIN, GPIO_ON);
+    sleep_ms(SOLENOID_RUNTIME_MS);
+    gpio_put(SOLENOID_PIN, GPIO_OFF);
+    on_board_led_put(GPIO_OFF);
 }
 
-bool alarms_equal(const datetime_t *a, const datetime_t *b) {
-    return a->year == b->year &&
-        a->month == b->month &&
-        a->day == b->day &&
-        a->dotw == b->dotw &&
-        a->hour == b->hour &&
-        a->min == b->min &&
-        a->sec == b->sec;
+static void water_plants_interrupt(void) {
+    datetime_t nextAlarm;
+    if (get_alarm_at_index(&nextAlarm, m_alarms.index)) {
+        m_alarms.index++;
+
+        if (m_alarms.index >= m_alarms.length) {
+            m_alarms.index = 0;
+        }
+
+        rtc_set_alarm(&nextAlarm, &water_plants_interrupt);
+    }
+
+    multicore_reset_core1();
+    multicore_launch_core1(water_plants);
+}
+
+void get_alarms(alarms_t *alarms) {
+    *alarms = m_alarms;
 }
 
 bool get_alarm_at_index(datetime_t *alarm, const int8_t index) {
@@ -49,26 +52,14 @@ bool get_alarm_at_index(datetime_t *alarm, const int8_t index) {
     return true;
 }
 
-bool next_alarm(datetime_t *nextAlarm) {
-    if (m_alarms.length > 0) {
-        *nextAlarm = m_alarms.alarms[m_alarms.index];
-        m_alarms.index++;
-
-        if (m_alarms.index >= m_alarms.length) {
-            m_alarms.index = 0;
+bool add_alarm(const datetime_t *newAlarm) {
+    // check for existing alarm before adding
+    for (uint8_t i = 0; i < m_alarms.length; i++) {
+        if (alarms_equal(&m_alarms.alarms[i], newAlarm)) {
+            return false;
         }
-
-        return true;
     }
 
-    return false;
-}
-
-void get_alarms(alarms_t *alarms) {
-    *alarms = m_alarms;
-}
-
-bool add_alarm(const datetime_t *newAlarm) {
     m_alarms.alarms = realloc(m_alarms.alarms, sizeof(datetime_t) * (m_alarms.length + 1));
     if (m_alarms.alarms != NULL) {
         m_alarms.alarms[m_alarms.length] = *newAlarm;
@@ -79,6 +70,12 @@ bool add_alarm(const datetime_t *newAlarm) {
         }
 
         m_alarms.length++;
+
+        datetime_t nextAlarm;
+        get_alarm_at_index(&nextAlarm, m_alarms.index - 1);
+        rtc_set_alarm(&nextAlarm, &water_plants_interrupt);
+        rtc_enable_alarm();
+
         return true;
     }
 
@@ -86,6 +83,8 @@ bool add_alarm(const datetime_t *newAlarm) {
 }
 
 bool remove_alarm(const datetime_t *targetAlarm) {
+    bool alarmDeleted = false;
+
     for (uint8_t i = 0; i < m_alarms.length; i++) {
         if (alarms_equal(&m_alarms.alarms[i], targetAlarm)) {
             for (uint8_t j = i; j < m_alarms.length - 1; j++) {
@@ -101,12 +100,48 @@ bool remove_alarm(const datetime_t *targetAlarm) {
 
             m_alarms.alarms = realloc(m_alarms.alarms, sizeof(datetime_t) * m_alarms.length);
             if (m_alarms.alarms == NULL) {
-                return false;
+                alarmDeleted = false;
+                break;
             }
 
-            return true;
+            alarmDeleted = true;
+            break;
         }
     }
 
-    return false;
+    if (alarmDeleted && m_alarms.length > 0) {
+        datetime_t nextAlarm;
+        get_alarm_at_index(&nextAlarm, m_alarms.index - 1);
+        rtc_set_alarm(&nextAlarm, &water_plants_interrupt);
+    } else {
+        rtc_disable_alarm();
+    }
+
+    return alarmDeleted;
+}
+
+bool set_next_alarm(const uint8_t alarmId) {
+    if (alarmId < 0 || alarmId >= m_alarms.length) {
+        return false;
+    }
+    
+    m_alarms.index = alarmId + 1;
+    if (m_alarms.index >= m_alarms.length) {
+        m_alarms.index = 0;
+    }
+
+    datetime_t nextAlarm;
+    get_alarm_at_index(&nextAlarm, alarmId);
+    rtc_set_alarm(&nextAlarm, &water_plants_interrupt);
+    return true;
+}
+
+bool alarms_equal(const datetime_t *a, const datetime_t *b) {
+    return a->year == b->year &&
+        a->month == b->month &&
+        a->day == b->day &&
+        a->dotw == b->dotw &&
+        a->hour == b->hour &&
+        a->min == b->min &&
+        a->sec == b->sec;
 }

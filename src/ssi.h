@@ -5,13 +5,16 @@
 #include "lwip/apps/httpd.h"
 #include "pico/cyw43_arch.h"
 #include "stdbool.h"
+#include "logger.h"
+#include "sys_info.h"
+#include "alarms.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
     bool ssi_init();
-    uint16_t ssi_handler(const uint8_t index, const char *pcInsert, const uint8_t insertLength);
+    u16_t ssi_handler(int index, char *pcInsert, int insertLen, u16_t current_tag_part, u16_t *next_tag_part);
 
 #ifdef __cplusplus
 }

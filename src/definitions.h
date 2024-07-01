@@ -35,6 +35,8 @@
 
 // Buffer Max Lengths
 #define USB_COMMS_MAX_BUFFER_LENGTH 256
+#define DATETIME_JSON_MAX_BUFFER_LENGTH 72
+#define SSI_RESPONSE_MAX_BUFFER_LENGTH 1000
 
 // The following definitions should be defined through the cmake build process
 // #define PICO_W           1  // -DPICO_BOARD=""

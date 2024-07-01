@@ -1,20 +1,21 @@
 #ifndef CGI_H
 #define CGI_H
 
+#include <string.h>
 #include "pico/stdlib.h"
 #include "lwip/apps/httpd.h"
 #include "pico/cyw43_arch.h"
 #include "stdbool.h"
+#include "logger.h"
+#include "helpers.h"
+#include "sys_info.h"
+#include "alarms.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
     bool cgi_init(void);
-    const char *cgi_handle_request_set_time(int index, int numParams, char *pcParam[], char *pcValue[]);
-    const char *cgi_handle_request_add_alarm(int index, int numParams, char *pcParam[], char *pcValue[]);
-    const char *cgi_handle_request_remove_alarm(int index, int numParams, char *pcParam[], char *pcValue[]);
-    const char *cgi_handle_request_set_gpio_value(int index, int numParams, char *pcParam[], char *pcValue[]);
 
 #ifdef __cplusplus
 }
