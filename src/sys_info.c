@@ -48,5 +48,7 @@ char *sys_info_get_ip_address() {
         }
         netif = netif->next;
     }
+
+    return "";
 }
 #endif
