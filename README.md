@@ -29,7 +29,7 @@ You can check out a video walkthrough of the code for version 1.0.0 on my YouTub
 - CMake 3.13 or later
 - Raspberry Pi Pico SDK 1.5.0 or later
 - PICO_W only: 
-   - Python installed on your system and accessible via python3 or python
+   - Python installed on your system and accessible on the PATH via python3 or python
 
 ## Setup
 1. Clone this repository:
@@ -136,7 +136,7 @@ You can check out a video walkthrough of the code for version 1.0.0 on my YouTub
   - **sys_info.c**: Common system information shared between `usb_comms` and `ssi`
   - **sys_info.h**: Headers for `sys_info.c`
   - **usb_comms.c**: USB Communication between a host and the pico
-  - **usb_comms.h** Headers for `usb_comms.c`
+  - **usb_comms.h**: Headers for `usb_comms.c`
 - **.gitignore**: files git should ignore when making commits
 - **CHANGELOG.md**: History of project versions and changes
 - **CMakeLists.txt**: CMake configuration file.
