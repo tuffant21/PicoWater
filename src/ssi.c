@@ -2,8 +2,6 @@
 
 #include "ssi.h"
 
-// these are basically get requests
-
 // set SSI Tags
 const char *ssi_tags[] = {
     "sysinfo"

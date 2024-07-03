@@ -19,13 +19,17 @@ You can check out a video walkthrough of the code for version 1.0.0 on my YouTub
 - Configurable watering schedules via RTC alarms.
 - Supports both Raspberry Pi Pico and Pico W (with Wi-Fi functionality).
 - Supports USB communication to control pico
+- PICO_W only:
+   - Web Server that allows remote control of the system
 
 ## Requirements
 - Raspberry Pi Pico or Pico W
 - Solenoid valve
 - Necessary electronic components (wires, resistors, etc.)
 - CMake 3.13 or later
-- Raspberry Pi Pico SDK 1.4.0 or later
+- Raspberry Pi Pico SDK 1.5.0 or later
+- PICO_W only: 
+   - Python installed on your system and accessible via python3 or python
 
 ## Setup
 1. Clone this repository:
@@ -46,7 +50,8 @@ You can check out a video walkthrough of the code for version 1.0.0 on my YouTub
    cmake ..
 
    # or if you're using pico_w
-   cmake -DPICO_BOARD=pico_w ..
+   # make sure \" is included in the wifi_ssid and wifi_password to have quotes inside the quotes
+   cmake -DPICO_BOARD=pico_w -DWIFI_SSID="\"your_ssid\"" -DWIFI_PASSWORD="\"your_password\"" ..
    ```
 
 4. Build the project:
@@ -106,26 +111,38 @@ You can check out a video walkthrough of the code for version 1.0.0 on my YouTub
 6. Control the Pico via USB
   * connect a usb to the pico
   * run the following command in a terminal  `minicom -b 115200 -D /dev/ttyACM0 -c on`
+    * device could also be /dev/ttyACM1, /dev/ttyACM2, etc.
   * type `help` to get started
 
 ## Project Structure
+- **.github/**: Contains GitHub workflow checks for PRs
 - **build/**: Compiled source directory.
+- **html_files**: HTML files that will be compiled by `makefsdata.py` and sourced into `htmldata.c`
+  - **index.shtml**: main index.shtml entry that will run when the pico_w web server is started
 - **src/**: Source code directory.
   - **alarms.c**: Holds and defines all of the application alarms
-  - **alarms.h**: Headers for alarms.c
-  - **core_entries.c**: Holds any interrupts or core 1 entries
-  - **core_entries.h**: Headers for core_entries.c
+  - **alarms.h**: Headers for `alarms.c`
+  - **cgi.c**: Get requests the HTML files call for updating system information
+  - **cgi.h**: Headers for `cgi.c`
   - **definitions.h**: Configuration and definitions.
+  - **helpers.c**: Various helper funcions used throughout the application
+  - **helpers.h**: Headers for `helpers.c`
   - **initial_alarms.h**: Holds all of the initial alarms a user wants the program to start with
   - **logger.c**: Handles printing color and arguments to console
-  - **logger.h**: Headers for logger.c
+  - **logger.h**: Headers for `logger.c`
   - **main.c**: Main application code.
-  - **on_board_led.c**: Handles setting the GPIO value for the on board led
-  - **on_board_led.h**: Headers for on_board_led.c
+  - **ssi.c**: Directives that allow the server to dynamically include content in web pages before they are sent to the client
+  - **ssi.h** Headers for `ssi.c`
+  - **sys_info.c**: Common system information shared between `usb_comms` and `ssi`
+  - **sys_info.h**: Headers for `sys_info.c`
   - **usb_comms.c**: USB Communication between a host and the pico
-  - **usb_comms.h** Headers for usb_comms.c
+  - **usb_comms.h** Headers for `usb_comms.c`
+- **.gitignore**: files git should ignore when making commits
 - **CHANGELOG.md**: History of project versions and changes
 - **CMakeLists.txt**: CMake configuration file.
+- **htmldata.c**: data converted from html to raw hex
+- **lwipopts.h**: lwip options used for pico_w server
+- **makefsdata.py**: python script that converts html_data to raw hex
 - **pico_sdk_import.cmake**: Pico SDK import script.
 - **README.md**: Project setup and information
 
