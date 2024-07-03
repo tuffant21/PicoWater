@@ -1,13 +1,17 @@
+#if PICO_W == 1
+
 #ifndef SSI_H
 #define SSI_H
 
 #include "pico/stdlib.h"
-#include "lwip/apps/httpd.h"
-#include "pico/cyw43_arch.h"
 #include "stdbool.h"
 #include "logger.h"
 #include "sys_info.h"
 #include "alarms.h"
+
+#if PICO_W == 1
+#include "pico/cyw43_arch.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,3 +25,5 @@ extern "C" {
 #endif
 
 #endif // SSI_H
+
+#endif // PICO_W

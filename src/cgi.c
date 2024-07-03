@@ -1,3 +1,5 @@
+#if PICO_W == 1
+
 #include "cgi.h"
 
 static const char *cgi_handle_request_set_time(int index, int numParams, char *pcParam[], char *pcValue[]) {
@@ -201,3 +203,5 @@ static const tCGI cgi_handlers[] = {
 bool cgi_init(void) {
     http_set_cgi_handlers(cgi_handlers, 5);
 }
+
+#endif

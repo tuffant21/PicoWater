@@ -1,3 +1,5 @@
+#if PICO_W == 1
+
 #include "ssi.h"
 
 // these are basically get requests
@@ -75,3 +77,5 @@ u16_t ssi_handler(int index, char *pcInsert, int insertLen, u16_t current_tag_pa
 
     return 0;
 }
+
+#endif

@@ -39,7 +39,7 @@
 #define SSI_RESPONSE_MAX_BUFFER_LENGTH 1000
 
 // The following definitions should be defined through the cmake build process
-// #define PICO_W           1  // -DPICO_BOARD=""
+// #define PICO_W              // -DPICO_BOARD=""
 // #define WIFI_SSID           // -DWIFI_SSID=""
 // #define WIFI_PASSWORD       // -DWIFI_PASSWORD=""
 

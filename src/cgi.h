@@ -1,3 +1,5 @@
+#if PICO_W == 1
+
 #ifndef CGI_H
 #define CGI_H
 
@@ -22,3 +24,5 @@ extern "C" {
 #endif
 
 #endif // CGI_H
+
+#endif // PICO_W

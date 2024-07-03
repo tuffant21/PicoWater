@@ -12,7 +12,7 @@
 #include "sys_info.h"
 #include "helpers.h"
 
-#if defined(PICO_W)
+#if PICO_W == 1
 #include "pico/cyw43_arch.h"
 #endif
 

@@ -35,7 +35,7 @@ static void handle_request_help(void) {
     log_info("    gets the temperature of the onboard cpu");
     log_info("");
 
-#if defined(PICO_W)
+#if PICO_W == 1
     log_info("get-ip");
     log_info("    gets the router assigned ip address for this device");
     log_info("");
@@ -51,7 +51,7 @@ static void handle_request_help(void) {
     log_info("    (e.g., ****-**-** 0 06:00:00 for any year, any month, any day, Sunday, 06:00:00).");
     log_info("");
     log_info("The BOOL argument should either be a 1 or a 0. 1 representing on and 0 representing off");
-#if defined(PICO_W)
+#if PICO_W == 1
     log_info("");
     log_info("The CONNECT argument should be in the format of #SSID#PASSWORD#AUTH where the first # defines the");
     log_info("    delimiter you want and the following #'s representing the delimiter to split the string at. The");
@@ -163,7 +163,7 @@ static void handle_request_get_temp(void) {
     log_info("current temp is: %.2f °C / %.2f °F", temp, tempF);
 }
 
-#if defined(PICO_W)
+#if PICO_W == 1
 static void handle_request_get_ip_address(void) {
     char *ipAddress = sys_info_get_ip_address();
 
@@ -294,7 +294,7 @@ static void handle_newline_or_carriage_return(const char *buffer) {
         handle_request_get_temp();
     }
 
-#if defined(PICO_W)
+#if PICO_W == 1
     // get ip
     else if (
         strncmp("get-ip", buffer, strlen("get-ip")) == 0

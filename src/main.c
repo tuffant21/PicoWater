@@ -8,7 +8,7 @@
 #include "usb_comms.h"
 #include "sys_info.h"
 
-#if defined(PICO_W)
+#if PICO_W == 1
 #include "pico/cyw43_arch.h"
 #include "lwip/apps/httpd.h"
 #include "ssi.h"
@@ -20,7 +20,7 @@ bool init() {
         return false;
     }
 
-#if defined(PICO_W)
+#if PICO_W == 1
     if (cyw43_arch_init()) {
         log_error("Wi-Fi init failed");
         return false;
@@ -58,7 +58,7 @@ bool init() {
 
     sys_info_init();
 
-#if defined(PICO_W)
+#if PICO_W == 1
 #if defined(WIFI_SSID) && defined(WIFI_PASSWORD)
     log_debug("attempting to connect to network [%s]...", WIFI_SSID);
     bool connected = sys_info_connect_to_network(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK);

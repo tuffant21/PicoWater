@@ -8,7 +8,7 @@
 #include "definitions.h"
 #include "helpers.h"
 
-#if defined(PICO_W)
+#if PICO_W == 1
 #include "pico/cyw43_arch.h"
 #endif
 
@@ -24,7 +24,7 @@ extern "C" {
     datetime_t sys_info_get_time();
     void sys_info_set_time(datetime_t *time);
 
-#if defined(PICO_W)
+#if PICO_W == 1
     bool sys_info_connect_to_network(const char *ssid, const char *password, const uint32_t auth);
     char *sys_info_get_ip_address();
 #endif

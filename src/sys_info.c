@@ -34,7 +34,7 @@ void sys_info_set_time(datetime_t *time) {
     rtc_set_datetime(time);
 }
 
-#if defined(PICO_W)
+#if PICO_W == 1
 bool sys_info_connect_to_network(const char *ssid, const char *password, const uint32_t auth) {
     int connected = cyw43_arch_wifi_connect_timeout_ms(ssid, password, auth, 30000);
     return connected == 0;
