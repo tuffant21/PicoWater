@@ -4,6 +4,7 @@
 #define SSI_H
 
 #include "pico/stdlib.h"
+#include "lwip/apps/httpd.h"
 #include "stdbool.h"
 #include "logger.h"
 #include "sys_info.h"
