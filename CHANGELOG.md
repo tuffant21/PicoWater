@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.0] - 2024-07-06
+
+### Added
+* N/A
+
+### Changed
+* N/A
+
+### Fixed
+* N/A
+
+### Removed
+* N/A
+
 ## [1.1.1] - 2024-21-24
 
 ### Added
