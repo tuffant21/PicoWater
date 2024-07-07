@@ -59,7 +59,7 @@ target_include_directories(${PROGRAM_NAME} PRIVATE
 )
 
 pico_set_program_name(${PROGRAM_NAME} "PicoWater")
-pico_set_program_version(${PROGRAM_NAME} "1.2.0")
+pico_set_program_version(${PROGRAM_NAME} "1.2.1")
 pico_enable_stdio_uart(${PROGRAM_NAME} FALSE)
 pico_enable_stdio_usb(${PROGRAM_NAME} TRUE)
 pico_add_extra_outputs(${PROGRAM_NAME})
