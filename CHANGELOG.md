@@ -1,5 +1,39 @@
 # Changelog
 
+## [1.2.0] - 2024-07-06
+
+### Added
+* `WIFI_SSID` that can be added as a build argument to CMake
+* `WIFI_PASSWORD` that can be added as a build argument to CMake
+* `makefsdata.py` to convert html files into raw bytes
+* Screenshots of the application to the screenshots folder
+* `index.shtml` to the html_files folder for pico_w webserver
+* `lwipopts.h` for light weight ip options
+* `src/cgi.c` file to handle updates to the webserver
+* `src/helpers.c` file to help with various helper functions
+* `src/ssi.c` file to return data for the application
+* `src/sys_info.c` file to retrieve system information shared between the ssi and usb_comms
+
+### Changed
+* gitignore to ignore new htmldata.c
+* Pico SDK minimum required version to 1.5.0
+* Updated CMakeLists.txt
+* Updated README.md to reflect new changes to the system
+* Moved water_plants rtc interrupt to `src/alarms.c`
+* Updated alarm functionality to accomodate multiple files updating alarms
+* Updated usb comms to have the additional functionality
+  * get-uptime
+  * get-temp
+  * get-ip
+  * connect-to-network
+
+### Fixed
+* Include guards to determine the correct value of PICO_W
+
+### Removed
+* `src/core_entries.c` to let `alarms.c` handle interrupts directly
+* `src/on_board_led.c` and moved to helper functions file
+
 ## [1.1.1] - 2024-21-24
 
 ### Added

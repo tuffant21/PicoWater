@@ -2,14 +2,17 @@
 #include "pico/util/datetime.h"
 #include "stdbool.h"
 #include "definitions.h"
-#include "on_board_led.h"
-#include "core_entries.h"
+#include "helpers.h"
 #include "initial_alarms.h"
 #include "alarms.h"
 #include "usb_comms.h"
+#include "sys_info.h"
 
-#if PICO_W
+#if PICO_W == 1
 #include "pico/cyw43_arch.h"
+#include "lwip/apps/httpd.h"
+#include "ssi.h"
+#include "cgi.h"
 #endif
 
 bool init() {
@@ -17,11 +20,13 @@ bool init() {
         return false;
     }
 
-#if PICO_W
+#if PICO_W == 1
     if (cyw43_arch_init()) {
-        printf("Wi-Fi init failed");
+        log_error("Wi-Fi init failed");
         return false;
     }
+
+    cyw43_arch_enable_sta_mode();
 #endif
 
     on_board_led_init();
@@ -45,8 +50,40 @@ bool init() {
     gpio_init(SOLENOID_PIN);
     gpio_set_dir(SOLENOID_PIN, GPIO_OUT);
 
+    // init alarms
     uint8_t initialAlarmsLength = sizeof(INITIAL_ALARMS) / sizeof(INITIAL_ALARMS[0]);
-    alarms_init(INITIAL_ALARMS, initialAlarmsLength);
+    for (uint8_t i = 0; i < initialAlarmsLength; i++) {
+        add_alarm(&INITIAL_ALARMS[i]);
+    }
+
+    sys_info_init();
+
+#if PICO_W == 1
+#if defined(WIFI_SSID) && defined(WIFI_PASSWORD)
+    log_debug("attempting to connect to network [%s]...", WIFI_SSID);
+    bool connected = sys_info_connect_to_network(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK);
+    connected
+        ? log_debug("successfull connected to the network!")
+        : log_warn("could not connect to the network!");
+#endif
+
+    char *ipAddress = sys_info_get_ip_address();
+    if (strncmp("0.0.0.0", ipAddress, strlen("0.0.0.0")) != 0) {
+        log_info("IP Address: %s", ipAddress);
+    }
+
+    log_debug("initializing http server...");
+    httpd_init();
+    log_debug("http server initialized!");
+
+    log_debug("initalizing ssi...");
+    ssi_init();
+    log_debug("ssi initialized!");
+
+    log_debug("initalizing cgi...");
+    cgi_init();
+    log_debug("cgi initialized!");
+#endif
 
     return true;
 }
@@ -54,11 +91,6 @@ bool init() {
 int main() {
     if (!init()) {
         return 1;
-    }
-
-    datetime_t nextAlarm;
-    if (next_alarm(&nextAlarm)) {
-        rtc_set_alarm(&nextAlarm, &water_plants_interrupt);
     }
 
     // water alarm will keep firing forever

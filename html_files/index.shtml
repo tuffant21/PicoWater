@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pico Water Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS for Futuristic Styling -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #141E30; /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #243B55, #141E30); /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #243B55, #141E30);
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            margin: 0;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            width: 100%;
+        }
+        .card-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .card-header h2 {
+            font-weight: 300;
+        }
+        .form-control, .btn {
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+        .btn-primary, .btn-success, .btn-danger {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            transition: background 0.3s ease-in-out;
+        }
+        .btn-primary:hover, .btn-success:hover, .btn-danger:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        .btn:disabled {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: rgba(255, 255, 255, 0.3) !important;
+        }
+        .form-check-label {
+            color: #ffffff;
+        }
+        .list-group-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffffff;
+        }
+        .next-alarm {
+            color: #ff4081;
+            font-weight: bold;
+        }
+        .current-date-time {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Pico Water Dashboard</h2>
+            </div>
+            <div class="card-body">
+                <!-- System Information Section -->
+                <div class="section mb-4">
+                    <h4>System Information</h4>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="power-toggle">Power:</label>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="power-toggle" onclick="togglePower()">
+                                <label class="custom-control-label" for="power-toggle">On/Off</label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="system-temp">Temperature:</label>
+                            <p id="system-temp">N/A</p>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="current-date-time">Current Date:</label>
+                            <p id="current-date-time"><span id="dotw"></span>, <span id="month"></span> <span id="day"></span>, <span id="year"></span> - <span id="time"></span></p>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="system-uptime">System Uptime:</label>
+                            <p id="system-uptime">N/A</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Date and Time Section -->
+                <div class="section mb-4">
+                    <form id="set-date-time-form" action="/set-time.cgi" method="get">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="datetime-input">Set Date & Time:</label>
+                                <input type="datetime-local" id="datetime-input" name="datetime" class="form-control" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="dotw-input">Day of the Week:</label>
+                                <select id="dotw-input" name="dotw" class="form-control" required>
+                                    <option value="" disabled selected>Select a day</option>
+                                    <option value="0">Sunday</option>
+                                    <option value="1">Monday</option>
+                                    <option value="2">Tuesday</option>
+                                    <option value="3">Wednesday</option>
+                                    <option value="4">Thursday</option>
+                                    <option value="5">Friday</option>
+                                    <option value="6">Saturday</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block" id="set-date-time-btn" disabled>Set Date and Time</button>
+                    </form>
+                </div>
+                
+                <!-- Alarms Section -->
+                <div class="section mb-4">
+                    <h4>Alarms</h4>
+                    <ul class="list-group" id="alarms-list">
+                        <!-- Alarms will be listed here -->
+                    </ul>
+                    <form id="add-alarm-form" class="mt-3" action="/add-alarm.cgi" method="get">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="alarm-year">Year:</label>
+                                <input type="number" id="alarm-year" name="year" class="form-control" placeholder="Optional">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="alarm-month">Month:</label>
+                                <input type="number" id="alarm-month" name="month" class="form-control" placeholder="Optional" min="1" max="12">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="alarm-day">Day:</label>
+                                <input type="number" id="alarm-day" name="day" class="form-control" placeholder="Optional" min="1" max="31">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="alarm-dotw">Day of the Week:</label>
+                                <select id="alarm-dotw" name="dotw" class="form-control">
+                                    <option value="">Optional</option>
+                                    <option value="0">Sunday</option>
+                                    <option value="1">Monday</option>
+                                    <option value="2">Tuesday</option>
+                                    <option value="3">Wednesday</option>
+                                    <option value="4">Thursday</option>
+                                    <option value="5">Friday</option>
+                                    <option value="6">Saturday</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="alarm-hour">Hour:</label>
+                                <input type="number" id="alarm-hour" name="hour" class="form-control" placeholder="Optional" min="0" max="23">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="alarm-min">Min:</label>
+                                <input type="number" id="alarm-min" name="min" class="form-control" placeholder="Optional" min="0" max="59">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="alarm-sec">Sec:</label>
+                                <input type="number" id="alarm-sec" name="sec" class="form-control" placeholder="Required" required min="0" max="59">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block" id="add-alarm-btn" disabled>Add Alarm</button>
+                    </form>
+                    <form id="remove-alarm-form" class="mt-3" action="/remove-alarm.cgi" method="get">
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label for="remove-alarm">Remove Alarm:</label>
+                                <input type="number" id="remove-alarm" name="alarm-index" class="form-control" placeholder="Alarm ID" required>
+                            </div>
+                            <div class="form-group col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-danger btn-block" id="remove-alarm-btn" disabled>Remove Alarm</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="system-information" style="display: none">
+        <!--#sysinfo-->
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://MomentJS.com/downloads/moment.min.js"></script>
+
+    <script>
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const prependZeroCheck = arg => arg < 10 ? `0${arg}` : arg;
+
+        function isTest() {
+            const currentUrl = window.location.href;
+            const url = new URL(currentUrl);
+            const params = new URLSearchParams(url.search);
+            return params.get('env') === 'test';
+        }
+
+        function removeURLParameters() {
+            if (isTest()) {
+                return;
+            }
+
+            const url = new URL(window.location.href);
+            if (url.pathname != '/') {
+                window.location.replace(url.origin);
+            }
+        }
+
+        function getSysInfo() {
+            if (isTest()) {
+                return {
+                    gpioValue: 1,
+                    temp: 25.2,
+                    uptime: 88400000,
+                    now: { year: 2024, month: 6, day: 26, dotw: 3, hour: 8, min: 48, sec: 30 },
+                    nextAlarm: 0,
+                    alarms: [
+                        { year: -1, month: -1, day: -1, dotw: 0, hour: 6, min: 0, sec: 0 },
+                        { year: -1, month: -1, day: -1, dotw: 2, hour: 6, min: 0, sec: 0 },
+                        { year: -1, month: -1, day: -1, dotw: 5, hour: 6, min: 0, sec: 0 }
+                    ]
+                };
+            } else {
+                const innerHtml = document.getElementById('system-information').innerHTML;
+                const start = innerHtml.indexOf("{");
+                const end = innerHtml.lastIndexOf("}") + 1;
+                const data = innerHtml.slice(start,end);
+                return JSON.parse(data);
+            }
+        }
+
+        function initPowerButtonChecked(gpioValue) {
+            const powerToggle = document.getElementById('power-toggle');
+            powerToggle.checked = gpioValue;
+        }
+
+        function initTemp(temp) {
+            const tempF = ((temp * 9/5) + 32).toFixed(2);
+            document.getElementById('system-temp').innerHTML = `${temp} °C <br/> ${tempF} °F`;
+        }
+
+        function initUptime(uptimeMs) {
+            const duration = moment.duration(uptimeMs);
+            const format = `${duration.days()} days, ${duration.hours()} hours, ${duration.minutes()} minutes, ${duration.seconds()} seconds`;
+            document.getElementById('system-uptime').innerText = format;
+        }
+
+        function initCurrentDate(now) {
+            document.getElementById('year').innerText = now.year;
+            document.getElementById('month').innerText = months[now.month - 1];
+            document.getElementById('day').innerText = prependZeroCheck(now.day);
+            document.getElementById('time').innerText = `${prependZeroCheck(now.hour)}:${prependZeroCheck(now.min)}:${prependZeroCheck(now.sec)}`;
+            document.getElementById('dotw').innerText = daysOfWeek[now.dotw];
+        }
+
+        function initAlarms(alarms, nextAlarm) {
+            if (alarms.length == 0) {
+                const alarmsList = document.getElementById('alarms-list');
+                const alarmItem = document.createElement('li');
+                alarmItem.classList.add('list-group-item');
+                alarmItem.innerText = `No Alarms`;
+                alarmsList.appendChild(alarmItem);
+                return;
+            }
+
+            for (let i = 0; i < alarms.length; i++) {
+                const alarm = alarms[i];
+                let alarmTime = alarm.year == -1 ? "****-" : `${alarm.year}-`;
+                alarmTime += alarm.month == -1 ? "**-" : `${prependZeroCheck(alarm.month)}-`;
+                alarmTime += alarm.day == -1 ? "** " : `${prependZeroCheck(alarm.day)} `;
+                alarmTime += alarm.dotw == -1 ? "* " : `${daysOfWeek[alarm.dotw]} `;
+                alarmTime += alarm.hour == -1 ? "**:" : `${prependZeroCheck(alarm.hour)}:`;
+                alarmTime += alarm.min == -1 ? "**:" : `${prependZeroCheck(alarm.min)}:`;
+                alarmTime += prependZeroCheck(alarm.sec);
+
+                const alarmsList = document.getElementById('alarms-list');
+                const alarmId = alarmsList.children.length;
+                const alarmItem = document.createElement('a');
+                alarmItem.classList.add('list-group-item');
+                alarmItem.classList.add('list-group-item-action');
+                if (nextAlarm === i) alarmItem.classList.add('active');
+                alarmItem.innerText = `Alarm ${alarmId}: ${alarmTime}`;
+                alarmItem.id = `alarm-${alarmId}`;
+                alarmItem.href = `change-alarm.cgi?id=${alarmId}`;
+                alarmsList.appendChild(alarmItem);
+            }
+        }
+
+        function init() {
+            removeURLParameters();
+            const data = getSysInfo();
+            initPowerButtonChecked(data.gpioValue);
+            initTemp(data.temp);
+            initCurrentDate(data.now);
+            initUptime(data.uptime);
+            initAlarms(data.alarms, data.nextAlarm);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            init();
+
+            const setDateTimeForm = document.getElementById('set-date-time-form');
+            const addAlarmForm = document.getElementById('add-alarm-form');
+            const removeAlarmForm = document.getElementById('remove-alarm-form');
+
+            setDateTimeForm.addEventListener('input', function () {
+                document.getElementById('set-date-time-btn').disabled = !setDateTimeForm.checkValidity();
+            });
+
+            addAlarmForm.addEventListener('input', function () {
+                document.getElementById('add-alarm-btn').disabled = !addAlarmForm.checkValidity();
+            });
+
+            removeAlarmForm.addEventListener('input', function () {
+                document.getElementById('remove-alarm-btn').disabled = !removeAlarmForm.checkValidity() || getSysInfo().alarms.length == 0;
+            });
+
+            const alarmYear = document.getElementById('alarm-year');
+            const alarmMonth = document.getElementById('alarm-month');
+            const alarmDay = document.getElementById('alarm-day');
+            const alarmDotw = document.getElementById('alarm-dotw');
+            const alarmHour = document.getElementById('alarm-hour');
+            const alarmMin = document.getElementById('alarm-min');
+            const alarmSec = document.getElementById('alarm-sec');
+            
+            function updateRequiredFields() {
+                if (alarmYear.value) {
+                    alarmMonth.required = alarmDay.required = alarmDotw.required = alarmHour.required = alarmMin.required = true;
+                    alarmMonth.placeholder = alarmDay.placeholder = alarmHour.placeholder = alarmMin.placeholder = "Required";
+                    alarmDotw.options[0].text = "Required";
+                } else {
+                    alarmMonth.required = alarmDay.required = alarmDotw.required = alarmHour.required = alarmMin.required = false;
+                    alarmMonth.placeholder = alarmDay.placeholder = alarmHour.placeholder = alarmMin.placeholder = "Optional";
+                    alarmDotw.options[0].text = "Optional";
+                }
+                
+                if (alarmMonth.value) {
+                    alarmDay.required = alarmDotw.required = alarmHour.required = alarmMin.required = true;
+                    alarmDay.placeholder = alarmHour.placeholder = alarmMin.placeholder = "Required";
+                    alarmDotw.options[0].text = "Required";
+                } else if (!alarmYear.value) {
+                    alarmDay.required = alarmDotw.required = alarmHour.required = alarmMin.required = false;
+                    alarmDay.placeholder = alarmHour.placeholder = alarmMin.placeholder = "Optional";
+                    alarmDotw.options[0].text = "Optional";
+                }
+                
+                if (alarmDay.value) {
+                    alarmDotw.required = alarmHour.required = alarmMin.required = true;
+                    alarmHour.placeholder = alarmMin.placeholder = "Required";
+                    alarmDotw.options[0].text = "Required";
+                } else if (!alarmYear.value && !alarmMonth.value) {
+                    alarmDotw.required = alarmHour.required = alarmMin.required = false;
+                    alarmHour.placeholder = alarmMin.placeholder = "Optional";
+                    alarmDotw.options[0].text = "Optional";
+                }
+                
+                if (alarmDotw.value) {
+                    alarmHour.required = alarmMin.required = true;
+                    alarmHour.placeholder = alarmMin.placeholder = "Required";
+                } else if (!alarmYear.value && !alarmMonth.value && !alarmDay.value) {
+                    alarmHour.required = alarmMin.required = false;
+                    alarmHour.placeholder = alarmMin.placeholder = "Optional";
+                }
+                
+                if (alarmHour.value) {
+                    alarmMin.required = true;
+                    alarmMin.placeholder = "Required";
+                } else if (!alarmYear.value && !alarmMonth.value && !alarmDay.value && !alarmDotw.value) {
+                    alarmMin.required = false;
+                    alarmMin.placeholder = "Optional";
+                }
+                
+                alarmSec.required = true; // Sec is always required
+                alarmSec.placeholder = "Required";
+            }
+
+            // Add event listeners to dynamically update required fields when values are removed
+            alarmYear.addEventListener('change', updateRequiredFields);
+            alarmMonth.addEventListener('change', updateRequiredFields);
+            alarmDay.addEventListener('change', updateRequiredFields);
+            alarmDotw.addEventListener('change', updateRequiredFields);
+            alarmHour.addEventListener('change', updateRequiredFields);
+            alarmMin.addEventListener('change', updateRequiredFields);
+            alarmSec.addEventListener('change', updateRequiredFields);
+        });
+
+        function togglePower() {
+            window.location.href = '/toggle-power.cgi';
+        }
+    </script>
+</body>
+</html>
