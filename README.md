@@ -4,7 +4,7 @@ This project automates the watering of your garden using a Raspberry Pi Pico. It
 
 You can check out a video walkthrough of the code for version 1.0.0 on my YouTube channel [here](https://youtu.be/9xKd_dKpwEM?si=SkYf2hw4Hm9uImdd).
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/9xKd_dKpwEM?si=0ycfxvVp_n1SlPHy" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Watch the video](https://img.youtube.com/vi/9xKd_dKpwEM/maxresdefault.jpg)](https://youtu.be/9xKd_dKpwEM)
 
 ## Screenshots
 ### USB Communications for regular pico
@@ -161,7 +161,7 @@ You can check out a video walkthrough of the code for version 1.0.0 on my YouTub
 Thank you to the "Learn Embedded Systems" YouTube channel for the tutorial on how to make a Simple Web Server in C. 
 Make sure to check out their YouTube video that I followed [here](https://youtu.be/C_O0MXGBHsw?si=Nnk5kwAcImsK2u_w)
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/C_O0MXGBHsw?si=Nnk5kwAcImsK2u_w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![PICO W WEBSERVER](https://img.youtube.com/vi/C_O0MXGBHsw/maxresdefault.jpg)](https://youtu.be/C_O0MXGBHsw)
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](https://opensource.org/license/mit) file for details.
