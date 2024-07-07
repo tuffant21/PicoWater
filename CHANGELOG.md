@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.1] - 2024-07-06
+
+### Added
+* version-check.yml to ensure version is updated correctly for each pr
+
+### Changed
+* Updated README.md to reflect file structure changes
+
+### Fixed
+* N/A
+
+### Removed
+* N/A
+
 ## [1.2.0] - 2024-07-06
 
 ### Added

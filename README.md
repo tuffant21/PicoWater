@@ -127,6 +127,7 @@ You can check out a video walkthrough of the code for version 1.0.0 on my YouTub
 
 ## Project Structure
 - **.github/**: Contains GitHub workflow checks for PRs
+  - **version-check.yml**: a github actions file that ensure the version has been incremented correctly for each pull request
 - **build/**: Compiled source directory.
 - **html_files**: HTML files that will be compiled by `makefsdata.py` and sourced into `htmldata.c`
   - **index.shtml**: Main index.shtml entry that will run when the pico_w web server is started
