@@ -6,7 +6,18 @@ You can check out a video walkthrough of the code for version 1.0.0 on my YouTub
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/9xKd_dKpwEM?si=0ycfxvVp_n1SlPHy" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
+## Screenshots
+### USB Communications for regular pico
+![USB Communications for regular pico](screenshots/usb_comms_pico.png "USB Comms Pico")
+
+### USB Communications for pico w
+![USB Communications for pico w](screenshots/usb_comms_pico_w.png "USB Comms Pico W")
+
+### Webserver for Pico W
+![Pico w web server](screenshots/webserver_pico_w.jpeg "Webserver Pico W")
+
 ## Table of Contents
+- [Screenshots](#screenshots)
 - [Features](#features)
 - [Requirements](#requirements)
 - [Setup](#setup)
