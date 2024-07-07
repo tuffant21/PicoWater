@@ -12,6 +12,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Fetch main branch
+      run: git fetch origin main
 
     - name: Get current version
       id: get_version
