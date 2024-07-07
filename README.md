@@ -129,7 +129,11 @@ You can check out a video walkthrough of the code for version 1.0.0 on my YouTub
 - **.github/**: Contains GitHub workflow checks for PRs
 - **build/**: Compiled source directory.
 - **html_files**: HTML files that will be compiled by `makefsdata.py` and sourced into `htmldata.c`
-  - **index.shtml**: main index.shtml entry that will run when the pico_w web server is started
+  - **index.shtml**: Main index.shtml entry that will run when the pico_w web server is started
+- **screenshots**: Screenshots of the application
+  - **usb_comms_pico.png**: Screenshot of the help menu for the regular pico
+  - **usb_comms_pico_w.png**: Screenshot of the help menu for the pico w
+  - **webserver_pico_w.jpeg**: Screenshot of the web application running on the pico w webserver
 - **src/**: Source code directory.
   - **alarms.c**: Holds and defines all of the application alarms
   - **alarms.h**: Headers for `alarms.c`
