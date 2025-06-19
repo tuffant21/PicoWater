@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.2] - 2025-06-19
+
+### Added
+* parts list to the readme
+
+### Changed
+* N/A
+
+### Fixed
+* N/A
+
+### Removed
+* N/A
+
 ## [1.2.1] - 2024-07-06
 
 ### Added

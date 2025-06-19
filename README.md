@@ -18,12 +18,17 @@ You can check out a video walkthrough of the code for version 1.0.0 on my YouTub
 
 ## Table of Contents
 - [Screenshots](#screenshots)
+- [Parts List](#parts-list)
 - [Features](#features)
 - [Requirements](#requirements)
 - [Setup](#setup)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
 - [License](#license)
+
+## Parts List
+
+* [Solenoid Valve](https://www.amazon.com/dp/B08NX6QBVJ)
 
 ## Features
 - Automated garden watering using a solenoid valve.
